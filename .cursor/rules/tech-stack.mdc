@@ -15,7 +15,7 @@ alwaysApply: true
 
 ## Frontend
 
-- Framework: React.js (Vite build tool)
+- Framework: React.js (**Vite 6**+ build tool; keep aligned with `npm audit` in CI)
 - Pattern: Modular, accessible components; match phase (minimal landing v1 vs richer UI v2+).
 
 ## Backend
