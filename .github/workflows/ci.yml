@@ -9,11 +9,6 @@ on:
 permissions:
   contents: read
 
-# Use Node.js 24 for JavaScript-based actions (checkout, setup-node, etc.) before runner default flips.
-# See: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   npm-audit:
     name: npm audit (frontend & backend)
@@ -44,16 +39,16 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-      # docker/login-action@v3.3.0
+      # docker/login-action@v4.1.0 (Node 24 runtime — replaces v3)
       - name: Log in to Docker Hub
-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # docker/build-push-action@v5.3.0
+      # docker/build-push-action@v7.1.0 (Node 24 runtime — replaces v5)
       - name: Build and Push Backend
-        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f
         with:
           context: ./backend
           file: ./backend/Dockerfile.prod
@@ -62,9 +57,8 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/kanban-backend:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/kanban-backend:${{ github.sha }}
 
-      # docker/build-push-action@v5.3.0
       - name: Build and Push Frontend
-        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f
         with:
           context: ./frontend
           file: ./frontend/Dockerfile.prod
