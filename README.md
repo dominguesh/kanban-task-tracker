@@ -13,7 +13,7 @@ The repository still ships **defense-in-depth defaults** (Compose topology, hard
 
 ## Audience
 
-Hiring managers and technical reviewers evaluating **systems thinking**, **segmented exposure**, **supply-chain-aware delivery**, and **governed AI-assisted change** (what is automated vs what remains human judgment).
+Vibe coding enthusiasts, Zero Trust learners and technical reviewers evaluating **systems thinking**, **segmented exposure**, **supply-chain-aware delivery**, and **governed AI-assisted change** (what is automated vs what remains human judgment).
 
 ---
 
