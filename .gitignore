@@ -3,6 +3,9 @@
 .env.*
 !.env.example
 
+# Dev-workstation SSH (public keys only; keep local file out of VCS)
+.dev/authorized_keys
+
 # Dependencies & build output
 **/node_modules/
 **/dist/

@@ -10,7 +10,7 @@ This matrix maps **controls** in this repository to **mechanisms** and **locatio
 |----|---------|------------------|----------|
 | CM-1 | No production secrets in Git | `.gitignore` excludes `.env`, `.env.*` (with `.env.example` exception pattern) | Root `.gitignore` |
 | CM-2 | Template for local configuration | `.env.example` documents variables without real values | `.env.example` |
-| CM-3 | Runtime secrets from environment | Backend uses `process.env` (`DATABASE_URL`, `PORT`); Compose passes dev defaults only for local use | `backend/app.js`, `docker-compose.dev.yml` |
+| CM-3 | Runtime secrets from environment | Backend uses `process.env` (`DATABASE_URL`, `PORT`); Compose requires **`.env`** for **`POSTGRES_PASSWORD`** (and optional `POSTGRES_*` overrides); `DATABASE_URL` is interpolated for local dev | `backend/app.js`, `.env.example`, `docker-compose.dev.yml` |
 
 ---
 
@@ -34,6 +34,7 @@ This matrix maps **controls** in this repository to **mechanisms** and **locatio
 | NET-1 | Database not bound to host by default | No `ports` on `db` in base `docker-compose.dev.yml` | `docker-compose.dev.yml` |
 | NET-2 | Optional explicit DB exposure for GUI tools | Overlay `docker-compose.dev.db-host.yml` publishes `5432` only when merged | `docker-compose.dev.db-host.yml` |
 | NET-3 | Internal service discovery | Services on `kanban_app_network`; DNS names `frontend`, `backend`, `db` | Compose files |
+| NET-4 | Published dev ports not on the LAN | **127.0.0.1** bind for **5173**, **3000**, optional **5432** overlay, optional **2222** SSH | `docker-compose.dev.yml`, `docker-compose.dev.db-host.yml` |
 
 ---
 
@@ -81,7 +82,7 @@ This matrix maps **controls** in this repository to **mechanisms** and **locatio
 
 | ID | Planned control | Notes |
 |----|-----------------|-------|
-| PL-1 | CI beyond registry push | Today: Docker Hub build/push on `main` (see `.github/workflows/ci.yml`). Add PR checks, image scan, Hadolint, `npm audit`, SBOM, or signing as needed |
+| PL-1 | CI beyond registry push | Today: **`npm audit`** (moderate+) gate + Docker Hub build/push on `main`, pinned Actions SHAs, **`github.sha`** image tags (see `.github/workflows/ci.yml`). Add PR checks, image scan, Hadolint, SBOM, or signing as needed |
 | PL-2 | Multi-tenant data isolation | **Kanban App** v2+; document per-tenant DB vs schema vs RLS before schema work ([PRODUCT.md](PRODUCT.md)) |
 | PL-3 | Centralized secrets in prod (no Compose defaults) | Map to target platform |
 

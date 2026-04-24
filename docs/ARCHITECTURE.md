@@ -98,12 +98,14 @@ flowchart TB
 
 | Service | Image / build | Published ports (host) | Purpose |
 |---------|----------------|---------------------------|---------|
-| **frontend** | `frontend/Dockerfile.dev` | **5173** | Vite dev server; **Kanban App** UI. |
-| **backend** | `backend/Dockerfile.dev` | **3000** | Express API. |
+| **frontend** | `frontend/Dockerfile.dev` | **127.0.0.1:5173** | Vite dev server; **Kanban App** UI (host loopback only). |
+| **backend** | `backend/Dockerfile.dev` | **127.0.0.1:3000** | Express API (host loopback only). |
 | **db** | `postgres:16-alpine` | *(none by default)* | PostgreSQL; reachable as **`db:5432`** from other services. |
-| **dev-workstation** | root `Dockerfile.dev` | **2222 → 22** (SSH) | Optional Linux shell + tools; **not** the Vite server. |
+| **dev-workstation** | root `Dockerfile.dev` | **127.0.0.1:2222 → 22** (SSH) | Optional Linux shell + tools; **key-only SSH** (mount `.dev/authorized_keys`); **not** the Vite server. |
 
 ### 3.2 Default command (core app + DB)
+
+Create **`.env`** from **`.env.example`** and set **`POSTGRES_PASSWORD`** before the first `up` (Compose will error if it is missing).
 
 ```bash
 docker compose -f docker-compose.dev.yml up -d
@@ -113,7 +115,7 @@ Starts **frontend**, **backend**, and **db** only.
 
 ### 3.3 Compose profile: `tools` (optional dev-workstation)
 
-The **dev-workstation** service is behind **`profiles: [tools]`** so it does **not** run unless requested (saves CPU/RAM and image rebuilds when you only need the app).
+The **dev-workstation** service is behind **`profiles: [tools]`** so it does **not** run unless requested (saves CPU/RAM and image rebuilds when you only need the app). SSH accepts **public keys only** (no passwords); mount your key material at **`.dev/authorized_keys`** (see **`.dev/authorized_keys.example`**) or set **`DEV_WORKSTATION_AUTHORIZED_KEYS`** in `.env` to another file path. **`sudo` and `docker.io` were removed** from this image to reduce local blast radius.
 
 ```bash
 docker compose -f docker-compose.dev.yml --profile tools up -d
@@ -146,6 +148,7 @@ docker compose -f docker-compose.dev.yml -f docker-compose.dev.db-host.yml up -d
 | **`./frontend:/app`** | Live frontend source + `node_modules` behavior per host/container. |
 | **`./backend:/app`** | Live backend source. |
 | **`.:/workspace`** (dev-workstation only) | Whole repo inside the optional SSH container. |
+| **`.dev/authorized_keys` → `/run/ssh-keys/authorized_keys`** (dev-workstation only) | Public keys for **key-only** SSH (path overridable via **`DEV_WORKSTATION_AUTHORIZED_KEYS`**). |
 
 ---
 
@@ -155,8 +158,8 @@ docker compose -f docker-compose.dev.yml -f docker-compose.dev.db-host.yml up -d
 |----------|------------------|
 | Kanban App UI (Vite) | `http://localhost:5173` |
 | API | `http://localhost:3000` |
-| Postgres from another container | Host **`db`**, port **5432**, user/db/password **`kanban_app`** (see `docker-compose.dev.yml`). |
-| Postgres from host | Not available unless you use **`docker-compose.dev.db-host.yml`**; alternative: `docker compose exec db psql -U kanban_app -d kanban_app`. |
+| Postgres from another container | Host **`db`**, port **5432**; user/db/password from **`.env`** (`POSTGRES_USER`, `POSTGRES_DB`, `POSTGRES_PASSWORD`; defaults **`kanban_app`** for user/db name only). |
+| Postgres from host | Not available unless you use **`docker-compose.dev.db-host.yml`** (**127.0.0.1:5432**); shell: `docker compose exec -T db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"'`. |
 
 Backend reads **`DATABASE_URL`** and **`PORT`** (see `backend/app.js`). Defaults are set in Compose for local dev.
 
@@ -229,8 +232,9 @@ Document the chosen model in **PRODUCT.md** or an ADR before implementing migrat
 
 - **Product:** repository repositioned as **Kanban App** (`kanban-app`); [PRODUCT.md](PRODUCT.md) and [HARNESS_ENGINEERING.md](HARNESS_ENGINEERING.md) added.
 - **Hosting posture:** portfolio deployment narrative uses **self-hosted [Pangolin](https://pangolin.net/)** with **reverse proxy** ingress and **zero-trust** access principles ([docs](https://docs.pangolin.net/)); see **§1.1**.
-- **Naming:** Docker/Postgres dev identifiers **`kanban_app`**; bridge network **`kanban_app_network`**; CI registry image names **`kanban-backend`** / **`kanban-frontend`** (unchanged).
-- **Compose profile `tools`:** optional **dev-workstation**; default `up` runs app + DB only.
+- **Naming:** Docker/Postgres dev identifiers **`kanban_app`** (user/db name defaults); secrets from **`.env`**; bridge network **`kanban_app_network`**; CI registry image names **`kanban-backend`** / **`kanban-frontend`** (also tagged with **`github.sha`**).
+- **Compose profile `tools`:** optional **dev-workstation** (**key-only SSH**, **127.0.0.1:2222**); default `up` runs app + DB only.
+- **Host bind:** dev **frontend**, **backend**, optional **db** overlay, and **SSH** publish on **127.0.0.1** only.
 - **Postgres:** host port **5432** removed by default; optional **`docker-compose.dev.db-host.yml`** overlay.
 - **Healthcheck + `depends_on`:** backend waits for **healthy** Postgres.
 - **`.gitignore` / `.env.example`:** support local secrets without committing them.

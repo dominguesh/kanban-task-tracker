@@ -1,0 +1,5 @@
+# Copy this file to authorized_keys (same directory) and replace with your real key:
+#   cp .dev/authorized_keys.example .dev/authorized_keys
+#   printf '%s\n' "$(cat ~/.ssh/id_ed25519.pub)" > .dev/authorized_keys
+#
+# .dev/authorized_keys is gitignored. One public key per line (OpenSSH format).

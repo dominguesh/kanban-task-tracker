@@ -9,6 +9,9 @@
 .git
 .cursor
 
+# Local SSH keys for dev-workstation (never send to build daemon)
+.dev/authorized_keys
+
 # Logs & env files (never bake secrets into images)
 **/*.log
 **/.env

@@ -6,31 +6,63 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
-  build-and-push:
+  npm-audit:
+    name: npm audit (frontend & backend)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
+      # actions/setup-node@v4.3.0
+      - uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e
+        with:
+          node-version: "22"
+
+      - name: Audit frontend
+        working-directory: frontend
+        run: npm ci && npm audit --audit-level=moderate
+
+      - name: Audit backend
+        working-directory: backend
+        run: npm ci && npm audit --audit-level=moderate
+
+  build-and-push:
+    needs: npm-audit
+    runs-on: ubuntu-latest
+    steps:
+      # actions/checkout@v4.2.2
+      - name: Checkout Code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      # docker/login-action@v3.3.0
       - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # docker/build-push-action@v5.3.0
       - name: Build and Push Backend
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0
         with:
           context: ./backend
           file: ./backend/Dockerfile.prod
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/kanban-backend:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/kanban-backend:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/kanban-backend:${{ github.sha }}
 
+      # docker/build-push-action@v5.3.0
       - name: Build and Push Frontend
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0
         with:
           context: ./frontend
           file: ./frontend/Dockerfile.prod
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/kanban-frontend:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/kanban-frontend:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/kanban-frontend:${{ github.sha }}

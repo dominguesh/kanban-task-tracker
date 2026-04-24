@@ -92,6 +92,8 @@ Phased scope, auth, and tenancy are authoritative in **[docs/PRODUCT.md](docs/PR
 ## Quick start
 
 ```bash
+cp .env.example .env
+# Set POSTGRES_PASSWORD (e.g. openssl rand -base64 32). Avoid @ : / ? # in passwords (URL parsing).
 docker compose -f docker-compose.dev.yml up -d
 ```
 
@@ -100,7 +102,11 @@ docker compose -f docker-compose.dev.yml up -d
 | Kanban App UI (Vite) | [http://localhost:5173](http://localhost:5173) |
 | API | [http://localhost:3000](http://localhost:3000) |
 
-Optional: `--profile tools` for **dev-workstation**; merge **`docker-compose.dev.db-host.yml`** to expose Postgres on `localhost:5432`.
+Published ports are bound to **127.0.0.1** on the host (not the LAN).
+
+**Optional dev-workstation** (`--profile tools`): **key-only SSH** on `127.0.0.1:2222`. Copy [`.dev/authorized_keys.example`](.dev/authorized_keys.example) to `.dev/authorized_keys` and add your **`~/.ssh/*.pub`** line(s), then `docker compose -f docker-compose.dev.yml --profile tools up -d`.
+
+**Optional Postgres on the host:** merge **`docker-compose.dev.db-host.yml`** (still **127.0.0.1:5432** only).
 
 ---
 

@@ -29,7 +29,8 @@ Run these unless the user has already provided equivalent output:
    - Backend (Express): `curl -sf http://127.0.0.1:3000/` → expect body indicating API is alive (e.g. current root handler).
 
 3. **Database readiness** (from host)
-   - Preferred: `docker compose -f docker-compose.dev.yml exec -T db pg_isready -U kanban_app -d kanban_app` → exit **0**.
+   - Requires a root **`.env`** with **`POSTGRES_PASSWORD`** set (see `.env.example`).
+   - Preferred: `docker compose -f docker-compose.dev.yml exec -T db sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'` → exit **0** (uses the DB container’s env).
    - If **db** is not running, note it before other DB checks.
 
 4. **Optional Postgres on host**
@@ -45,7 +46,7 @@ Run these unless the user has already provided equivalent output:
    - Remind: copy from `.env.example` for local overrides; inject secrets with **1Password** (`op`) per project standards — never commit real secrets.
 
 2. **Compose secrets**
-   - Dev credentials in `docker-compose.dev.yml` are **local-only** defaults; warn if the user plans to reuse them outside local Docker.
+   - **`POSTGRES_PASSWORD`** (and optional user/db overrides) come from **`.env`** only — never commit `.env`; warn if the user reuses dev passwords outside local Docker.
 
 3. **Hooks**
    - If a check touches `frontend/` or `backend/` source, hooks may run — if something is blocked, explain it references **hardcoded secret patterns** and remediation (environment variables), without bypassing policy.

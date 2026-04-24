@@ -1,4 +1,4 @@
-# Merge overlay: publishes Postgres on the host at localhost:5432 for external GUI clients.
+# Merge overlay: publishes Postgres on the host at 127.0.0.1:5432 for external GUI clients.
 # Prefer keeping Postgres off the host surface when you only use the backend container.
 #
 # Usage:
@@ -7,4 +7,5 @@
 services:
   db:
     ports:
-      - "5432:5432"
+      # Bind to loopback only — not the LAN — when exposing Postgres to host GUI clients
+      - "127.0.0.1:5432:5432"

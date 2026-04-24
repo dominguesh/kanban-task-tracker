@@ -1,9 +1,11 @@
-# Kanban App local development (Postgres user/db: kanban_app)
+# Kanban App local development (Postgres credentials from `.env` — see `.env.example`)
 #
 # Default stack (app + DB on the internal Docker network):
+#   cp .env.example .env   # set POSTGRES_PASSWORD
 #   docker compose -f docker-compose.dev.yml up -d
 #
-# Optional Linux SSH/tools container (heavier — enable when needed):
+# Optional Linux SSH/tools container (key-only SSH — heavier — enable when needed):
+#   cp .dev/authorized_keys.example .dev/authorized_keys && paste your id_ed25519.pub
 #   docker compose -f docker-compose.dev.yml --profile tools up -d
 #
 # Optional: expose Postgres on localhost:5432 for GUI clients (DBeaver, etc.):
@@ -18,9 +20,10 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     ports:
-      - "2222:22"
+      - "127.0.0.1:2222:22"
     volumes:
       - .:/workspace
+      - ${DEV_WORKSTATION_AUTHORIZED_KEYS:-./.dev/authorized_keys}:/run/ssh-keys/authorized_keys:ro
       # Linux / WSL: uncomment to drive the host Docker daemon from inside this container
       # - /var/run/docker.sock:/var/run/docker.sock
     networks:
@@ -31,7 +34,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.dev
     ports:
-      - "5173:5173"
+      - "127.0.0.1:5173:5173"
     volumes:
       - ./frontend:/app
     networks:
@@ -42,32 +45,32 @@ services:
       context: ./backend
       dockerfile: Dockerfile.dev
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     volumes:
       - ./backend:/app
     depends_on:
       db:
         condition: service_healthy
     environment:
-      POSTGRES_USER: kanban_app
-      POSTGRES_PASSWORD: kanban_app
-      POSTGRES_DB: kanban_app
-      DATABASE_URL: postgresql://kanban_app:kanban_app@db:5432/kanban_app
+      POSTGRES_USER: ${POSTGRES_USER:-kanban_app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env — see .env.example}
+      POSTGRES_DB: ${POSTGRES_DB:-kanban_app}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-kanban_app}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-kanban_app}
     networks:
       - kanban_app_network
 
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: kanban_app
-      POSTGRES_PASSWORD: kanban_app
-      POSTGRES_DB: kanban_app
+      POSTGRES_USER: ${POSTGRES_USER:-kanban_app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env — see .env.example}
+      POSTGRES_DB: ${POSTGRES_DB:-kanban_app}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - kanban_app_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U kanban_app -d kanban_app"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
       timeout: 3s
       retries: 10
