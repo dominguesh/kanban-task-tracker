@@ -20,7 +20,7 @@ This document captures **what we are building**, **for whom**, and **how phases 
 
 ### 2.1 Primary (portfolio)
 
-Demonstrate professional skill in:
+For the **Audience** defined on the root [README.md](../README.md), demonstrate professional skill in:
 
 - **System design** — clear boundaries, evolution from monolith-friendly v1 toward multi-tenant v2+.
 - **Network** — v1 follows the **segmented dev Compose** and **self-hosted Pangolin / reverse-proxy** narrative in [ARCHITECTURE.md §1.1](ARCHITECTURE.md#11-portfolio-deployment-posture-pangolin-reverse-proxy-and-zero-trust); **more network detail after v2** when traffic patterns grow.

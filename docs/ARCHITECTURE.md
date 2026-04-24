@@ -36,7 +36,7 @@ flowchart LR
 
 ### 1.1 Portfolio deployment posture: Pangolin, reverse proxy, and zero trust
 
-This section records a deliberate **hosting and access model** for portfolio reviewers: **self-host the environment** and publish workloads through **Pangolin**, a **reverse-proxy–oriented, identity-aware access layer**, using **zero-trust principles** as the narrative bridge between “secure defaults in code” and “secure defaults at the edge.”
+This section records a deliberate **hosting and access model** for readers (audience on the root [README.md](../README.md)): **self-host the environment** and publish workloads through **Pangolin**, a **reverse-proxy–oriented, identity-aware access layer**, using **zero-trust principles** as the narrative bridge between “secure defaults in code” and “secure defaults at the edge.”
 
 **Why self-hosting (vs cloud-first PaaS as the default story):** managed platforms are valid operationally, but they can hide **where trust boundaries sit** and how **access is granted**. Running your own edge and stacks makes **control** explicit: you choose **what is exposed**, **to whom**, and **how identity is enforced**—which maps cleanly to solutions-architecture and security-engineering interviews.
 

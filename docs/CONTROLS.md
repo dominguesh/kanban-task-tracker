@@ -1,6 +1,6 @@
 # Security and engineering controls matrix
 
-This matrix maps **controls** in this repository to **mechanisms** and **locations**. It supports portfolio review (solutions architecture / security engineering) and operational onboarding.
+This matrix maps **controls** in this repository to **mechanisms** and **locations**. It supports technical review (solutions architecture / security engineering) and operational onboarding—aligned with the **Audience** on the root [README.md](../README.md).
 
 ---
 

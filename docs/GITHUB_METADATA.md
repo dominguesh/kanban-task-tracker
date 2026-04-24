@@ -14,7 +14,7 @@ Use for the public repository **[dominguesh/kanban-task-tracker](https://github.
 
 **Recommended:**
 
-> Kanban App — Trello-style portfolio project: React, Node, Postgres, Docker (dev + prod), DevSecOps hooks/rules/skills, self-hosted edge narrative, CI to Docker Hub (`kanban-backend` / `kanban-frontend`).
+> Kanban App — Trello-style portfolio: React, Node, Postgres, Docker (dev + prod), DevSecOps hooks/rules/skills, self-hosted Zero Trust–style edge, CI to Docker Hub. For vibe coders, ZT learners, and technical reviewers.
 
 **Shorter:**
 
@@ -26,7 +26,7 @@ Use for the public repository **[dominguesh/kanban-task-tracker](https://github.
 
 ## Topics / tags (suggested)
 
-`kanban` `docker` `docker-compose` `devsecops` `security` `containers` `nodejs` `react` `vite` `postgresql` `nginx` `cursor` `github-actions` `portfolio` `architecture` `express`
+`kanban` `docker` `docker-compose` `devsecops` `security` `zero-trust` `containers` `nodejs` `react` `vite` `postgresql` `nginx` `cursor` `github-actions` `portfolio` `architecture` `express`
 
 Pick **5–10** that best match how you want to be discovered.
 

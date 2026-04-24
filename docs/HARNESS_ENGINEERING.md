@@ -1,6 +1,6 @@
 # Harness engineering (educational note)
 
-This document is **not** a vendor integration guide. It exists for **academic and portfolio clarity**: how **AI-assisted engineering** is expected to behave in **Kanban App** development, and how this repo expresses **governance** beyond ad-hoc prompting.
+This document is **not** a vendor integration guide. It exists for **academic and portfolio clarity** for the same **Audience** as the root [README.md](../README.md) (vibe coding, **Zero Trust** learning, technical review): how **AI-assisted engineering** is expected to behave in **Kanban App** development, and how this repo expresses **governance** beyond ad-hoc prompting.
 
 ---
 
