@@ -1,0 +1,37 @@
+---
+description: "Core technology stack, design patterns, and infrastructure rules for Kanban App (slug kanban-app)"
+globs: "**/*"
+alwaysApply: true
+---
+
+# Tech Stack & Architecture Rules
+
+## Product
+
+- **Name:** Kanban App — **slug:** `kanban-app`. Portfolio Trello-style tracker; phased delivery per `docs/PRODUCT.md`.
+- **v1:** Public landing + wired stack; **no** kanban board UI requirement.
+- **v2+:** Boards, lists, cards, and related features; add **Material UI (MUI)** when building richer UI if not already present.
+- **Registry images (CI):** keep names `kanban-backend` and `kanban-frontend` as in `.github/workflows/ci.yml`.
+
+## Frontend
+
+- Framework: React.js (Vite build tool)
+- Pattern: Modular, accessible components; match phase (minimal landing v1 vs richer UI v2+).
+
+## Backend
+
+- Framework: Node.js with Express
+- **API style:** undecided until after v2 scoping (`docs/PRODUCT.md`); default to **REST + JSON** when introducing APIs unless an ADR chooses otherwise.
+
+## Database
+
+- Engine: PostgreSQL
+- Persistence: Always use named Docker volumes for database data.
+- **Multi-tenant** persistence is a v2+ requirement; design isolation (DB vs schema vs RLS) before schema migrations.
+
+## Infrastructure & Docker (Mac M2 Max & Windows WSL 2 Compatibility)
+
+- Architecture: Always prefer native `arm64` container images for Apple Silicon compatibility. Do not force `amd64` emulation unless strictly necessary.
+- Volumes: Use relative bind mounts for local development to enable hot-reloading (e.g., `./frontend:/app`).
+- File Sharing: Design for VirtioFS on Mac and the Linux filesystem on Windows WSL 2.
+- Compose network and dev DB identifiers follow `docs/ARCHITECTURE.md` (`kanban_app_network`, `kanban_app`).
